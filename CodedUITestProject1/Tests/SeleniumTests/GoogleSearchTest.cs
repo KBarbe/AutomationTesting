@@ -2,6 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium.Remote;
 using AutomationTesting.Selenium;
+using System;
+using OpenQA.Selenium;
 
 namespace AutomationTesting.Tests.SeleniumTests
 {
@@ -19,21 +21,31 @@ namespace AutomationTesting.Tests.SeleniumTests
         [TestMethod]
         public void GoogleSearch_test()
         {
-            //initialize selenium browser
-            SeleniumBrowser browser = new SeleniumBrowser(driver);
+            try
+            {
 
-            //open google
-            browser.GoToUrl("https://www.google.com/");
+                //initialize selenium browser
+                SeleniumBrowser browser = new SeleniumBrowser(driver);
 
-            //enter search text
-            driver.FindElementById("lst-ib").SendKeys("Testing with Selenium");
+                //open google
+                browser.GoToUrl("https://www.google.com/");
 
-            //click search
-            driver.FindElementByCssSelector("[type='submit']").Click();
-            browser.WaitForLoad();
+                //perform search
+                driver.FindElementById("lst-ib").SendKeys("Testing with Selenium");
+                driver.Keyboard.SendKeys(Keys.Enter);
+                browser.WaitForLoad();
 
-            //open selenium link
-            driver.FindElementByXPath("//a[@href='https://www.seleniumhq.org/']").Click();
+                //open selenium link
+                driver.FindElementByXPath("//a[@href='https://www.seleniumhq.org/']").Click();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                SeleniumServer.Cleanup(driver);
+            }
         }
     }
 }
