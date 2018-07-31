@@ -1,12 +1,10 @@
 ﻿using AutomationTesting.Enums;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Remote;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 
 namespace AutomationTesting.Selenium

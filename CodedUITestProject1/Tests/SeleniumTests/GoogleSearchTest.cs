@@ -23,7 +23,6 @@ namespace AutomationTesting.Tests.SeleniumTests
         {
             try
             {
-
                 //initialize selenium browser
                 SeleniumBrowser browser = new SeleniumBrowser(driver);
 
