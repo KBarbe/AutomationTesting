@@ -4,6 +4,8 @@ using Microsoft.VisualStudio.TestTools.UITesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -42,6 +44,7 @@ namespace AutomationTesting.SharedMethods
             
             ExchangeService exchangeService = new ExchangeService(ExchangeVersion.Exchange2010_SP2)
             {
+                //it is possible to have the password encrypted and have a method decrypt it before passing in
                 Credentials = new NetworkCredential("emailUser", "emailPassword", "domain")
             };
             exchangeService.AutodiscoverUrl("emailAddress");
@@ -81,6 +84,47 @@ namespace AutomationTesting.SharedMethods
                 }
             }
             return null;
+        }
+
+        public static string GetSqlResult(string query, string columnName, string dataSource = "default source", string dbCatalog = "default catalog", string dbUserName = "defaultUser", string password = "default password")
+        {
+            //it is possible to have the password encrypted and have a method decrypt it before passing in
+            SqlConnection sqlConnection = new SqlConnection($"Data Source = dataSource; Initial Catalog = {dbCatalog}; User Id = '{dbUserName}'; Password = 'password'");
+            string result = null;
+
+            using (sqlConnection)
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cmd.CommandText = query;
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = sqlConnection;
+
+                    if(sqlConnection.State != ConnectionState.Open)
+                    {
+                        sqlConnection.Open();
+                    }
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while(reader.Read())
+                        {
+                            string data = Convert.ToString(reader[columnName]);
+                            if(data != null)
+                            {
+                                result = data;
+                            }
+                            reader.Close();
+                            
+                            if(result != null)
+                            {
+                                return result;
+                            }
+                        }
+                    }
+                }
+            }
+            throw new Exception("SQL Query failed to return a result");
         }
     }
 }
